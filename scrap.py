@@ -2,30 +2,40 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 
-#years = [1930,1934,1938,1950,1954,
-         #1958,1962,1966,1970,1974,
-         #1978,1982,1986,1998,2002,
-         #2006,2010,2014,2018,2022]
+years = [1930,1934,1938,1950,1954,
+         1958,1962,1966,1970,1974,
+         1978,1982,1986,1998,2002,
+         2006,2010,2014,2018,2022, 2026]
 
-web = 'https://en.wikipedia.org/wiki/2022_FIFA_World_Cup'
+def get_fixtures(year):
+    web = f'https://en.wikipedia.org/wiki/{year}_FIFA_World_Cup'
 
-response = requests.get(web)
-content = response.text
+    response = requests.get(web)
+    content = response.text
 
-soup = BeautifulSoup(content, 'lxml')
+    soup = BeautifulSoup(content, 'lxml')
 
-matches = soup.find_all('div', class_='footballbox')
+    matches = soup.find_all('div', class_='footballbox')
 
-home = []
-score = []
-away = []
+    home = []
+    score = []
+    away = []
 
-for match in matches:
-    home.append(match.find('th', class_='fhome').get_text())
-    score.append(match.find('th', class_='fscore').get_text())
-    away.append(match.find('th', class_='faway').get_text())
+    for match in matches:
+        home.append(match.find('th', class_='fhome').get_text())
+        score.append(match.find('th', class_='fscore').get_text())
+        away.append(match.find('th', class_='faway').get_text())
 
-dict_football = {'Home-Nation': home, 'Final-Score': score, 'Away-Nation': away}
-df_football = pd.DataFrame(dict_football)
-df_football['Year'] = '2022'
-print(df_football)
+    dict_football = {'Home-Nation': home, 'Final-Score': score, 'Away-Nation': away}
+    df_football = pd.DataFrame(dict_football)
+    df_football['Year'] = year
+    return df_football
+
+
+fifa = [get_fixtures(year) for year in years]
+df_fifa = pd.concat(fifa, ignore_index=True)
+df_fifa.to_csv('fifa_worldcup_old_data.csv', index=False)
+
+#fixture
+#df_fixture = get_fixtures((2026))
+#df_fixture.to_csv('fixture', index=False)
