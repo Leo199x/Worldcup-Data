@@ -25,7 +25,7 @@ for match in matches:
     score.append(match.find('th', class_='fscore').get_text())
     away.append(match.find('th', class_='faway').get_text())
 
-dict_football = {'Home Nation': home, 'Final Scoreline': score, 'Away Nation': away}
+dict_football = {'Home-Nation': home, 'Final-Score': score, 'Away-Nation': away}
 df_football = pd.DataFrame(dict_football)
 df_football['Year'] = '2022'
 print(df_football)
